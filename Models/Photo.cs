@@ -1,13 +1,27 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace net_il_mio_fotoalbum.Models
 {
-
+    [Table("Photos")]
     public class Photo
     {
+        [Key]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Campo obbligatorio: devi inserire il titolo della foto")]
+        [StringLength(30, ErrorMessage = "Massimo 30 caratteri")]
+        [MinLength(3)]
         public string Title { get; set; }
+
+        [Required(ErrorMessage = "Campo obbligatorio...descrivi la tua foto")]
+        [StringLength(100, ErrorMessage = "Massimo 100 caratteri")]
+        [MinLength(5)]
         public string Description { get; set; }
+
+        // da implementare
+        //[Required(ErrorMessage = "Campo obbligatorio")]
         public byte[] Image { get; set; } // Per memorizzare i dati binari dell'immagine
         public bool IsVisible { get; set; }
 
