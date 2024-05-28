@@ -174,38 +174,31 @@ namespace net_il_mio_fotoalbum.Data
                 byte[] LoadImage(string imagePath) => File.ReadAllBytes(imagePath);
 
                 var photos = new List<Photo>
-                {
-                    new Photo
-                    {
-                        Title = "Norvegia in autunno",
-                        Description = "Fiordo d'autunno",
-                        //LoadImage(...): Questo è un metodo che si assume essere definito per caricare un'immagine da un percorso e restituirla come un array di byte (byte[]). È la funzione che converte l'immagine in dati binari che possono essere memorizzati nel database.
+        {
+            new Photo
+            {
+                Title = "Norvegia in autunno",
+                Description = "Fiordo d'autunno",
+                Image = LoadImage(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "1.jpeg")),
+                IsVisible = true,
+                Categories = new List<Category>()
+            },
+            new Photo
+            {
+                Title = "Seconda Foto",
+                Description = "Descrizione della seconda foto",
+                Image = LoadImage(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "2.jpg")),
+                IsVisible = true,
+                Categories = new List<Category>()
+            }
+            // Aggiungi altre foto se necessario
+        };
 
-                        //Directory.GetCurrentDirectory(): Questo metodo restituisce il percorso della directory corrente in cui l'applicazione è in esecuzione. In un'applicazione web .NET, questo sarà il percorso della cartella radice del progetto.
-
-                        Image = LoadImage(Directory.GetCurrentDirectory() + "/wwwroot/img/1.jpeg"),
-                        IsVisible = true,
-                        Categories = new List<Category>()
-                    },
-                    new Photo
-                    {
-                        Title = "Seconda Foto",
-                        Description = "Descrizione della seconda foto",
-                        Image = LoadImage(Directory.GetCurrentDirectory() + "/wwwroot/img/2.jpg"),
-                        IsVisible = true,
-                        Categories = new List<Category>()
-                    }
-                    // Aggiungi altre foto se necessario
-                };
-
-                foreach (var photo in photos)
-                {
-                    context.Photos.Add(photo);
-                }
-
+                context.Photos.AddRange(photos);
                 context.SaveChanges();
             }
         }
+
 
         internal static void PhotoInsert(Photo photo, List<SelectListItem>? categories)
         {

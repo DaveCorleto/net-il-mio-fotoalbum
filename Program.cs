@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using net_il_mio_fotoalbum.Data;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using net_il_mio_fotoalbum.Areas.Identity.Data;
 
 namespace net_il_mio_fotoalbum
 {
@@ -9,6 +11,7 @@ namespace net_il_mio_fotoalbum
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+                        var connectionString = builder.Configuration.GetConnectionString("ProfileContextConnection") ?? throw new InvalidOperationException("Connection string 'ProfileContextConnection' not found.");
 
             builder.Services.AddDbContext<PhotoContext>();
 
@@ -45,7 +48,7 @@ namespace net_il_mio_fotoalbum
                 pattern: "{controller=Photo}/{action=Index}/{id?}");
             app.MapRazorPages();
 
-            // Popolare il database con dati iniziali se è vuoto
+            // Popolare il database con dati iniziali se ï¿½ vuoto
             PhotoManager.SeedDatabase();
 
             app.Run();
