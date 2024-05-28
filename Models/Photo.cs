@@ -36,9 +36,8 @@ namespace net_il_mio_fotoalbum.Models
         }
 
         // Costruttore con parametri, con valore predefinito per isVisible
-        public Photo(int id, string title, string description, byte[] image, List<Category> categories, bool isVisible = true)
+        public Photo( string title, string description, byte[] image, List<Category> categories, bool isVisible = true)
         {
-            Id = id;
             Title = title;
             Description = description;
             Image = image;

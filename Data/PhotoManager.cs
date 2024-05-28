@@ -7,6 +7,7 @@ using System.Security.Policy;
 using MessagePack;
 using static System.Net.Mime.MediaTypeNames;
 using System.IO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace net_il_mio_fotoalbum.Data
 {
@@ -64,7 +65,8 @@ namespace net_il_mio_fotoalbum.Data
             using PhotoContext db = new PhotoContext();
             return db.Photos.Where(x => x.Title.ToLower().Contains(Title.ToLower())).ToList();
         }
-        public async Task<bool> PhotoInsert(Photo photo)
+        
+        public async Task<bool> PhotoInsert(Photo photo, List<string> selectedCategoryIds)
         {
             if (photo == null)
             {
@@ -84,6 +86,84 @@ namespace net_il_mio_fotoalbum.Data
             }
         }
 
+        public static bool PhotoEdit(int id, Photo photo, List<string> selectedCategoryIds)
+        {
+            try
+            {
+                using PhotoContext db = new PhotoContext();
+                var photoMod = db.Photos.Where(p => p.Id == id).Include(p => p.Categories).FirstOrDefault();
+
+                if (photoMod == null)
+                {
+                    return false;
+                }
+
+                // Aggiorna le proprietà della foto
+                photoMod.Title = photo.Title;
+                photoMod.Description = photo.Description;
+                photoMod.Image = photo.Image;
+                photoMod.IsVisible = photo.IsVisible;
+
+                // Svuota le categorie attuali
+                photoMod.Categories.Clear();
+
+                // Aggiungi le categorie selezionate
+                if (selectedCategoryIds != null)
+                {
+                    foreach (var categoryIdString in selectedCategoryIds)
+                    {
+                        if (int.TryParse(categoryIdString, out int categoryId))
+                        {
+                            var categoryFromDb = db.Categories.FirstOrDefault(c => c.Id == categoryId);
+                            if (categoryFromDb != null)
+                            {
+                                photoMod.Categories.Add(categoryFromDb);
+                            }
+                        }
+                        else
+                        {
+                            // Log per i casi in cui il parsing fallisce
+                            Console.WriteLine($"Failed to parse category ID: {categoryIdString}");
+                        }
+                    }
+                }
+
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log dell'eccezione per il debug
+                Console.WriteLine($"An error occurred while editing the photo: {ex.Message}");
+                return false;
+            }
+        }
+
+
+
+        public static bool PhotoDelete(int id)
+        {
+            try
+            {
+                //Qui recupero la foto selezionata con il metodo Rec...NON creo un nuovo context del db perchè sta già lavorando quello
+                //che utilizza GetPhotoById...
+
+                var photo = GetPhotoById(id, false); 
+                if (photo == null)
+                    return false;
+
+                //qui invece DEVO creare un nuovo contesto per essere sicuro che la rimozione dell'oggetto pizza venga tracciato dal DB'
+
+                using PhotoContext db = new PhotoContext();
+                db.Remove(photo);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
         public static void SeedDatabase()
         {
@@ -125,6 +205,11 @@ namespace net_il_mio_fotoalbum.Data
 
                 context.SaveChanges();
             }
+        }
+
+        internal static void PhotoInsert(Photo photo, List<SelectListItem>? categories)
+        {
+            throw new NotImplementedException();
         }
     }
 }

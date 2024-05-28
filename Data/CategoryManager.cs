@@ -8,12 +8,10 @@ namespace net_il_mio_fotoalbum.Data
     {
         public static int CategoryCount()
         {
-            //Creo un istanza temporanea di PizzaContext
-            //e con la direttiva using comunico di chiudermi la "connessione"
-
             using PhotoContext db = new PhotoContext();
             return db.Categories.Count();
         }
+
         public static List<Category> GetAllCategories()
         {
             using PhotoContext db = new PhotoContext();
@@ -26,12 +24,11 @@ namespace net_il_mio_fotoalbum.Data
             return photoContext.Categories.FirstOrDefault(c => c.Id == id);
         }
 
-        public static List<Category> GetCategoryByTitle(string Title)
+        public static List<Category> GetCategoryByTitle(string title)
         {
             using PhotoContext db = new PhotoContext();
-            return db.Categories.Where(x => x.Title.ToLower().Contains(Title.ToLower())).ToList();
+            return db.Categories.Where(x => x.Title.ToLower().Contains(title.ToLower())).ToList();
         }
-
 
         public async Task<bool> CategoryInsert(Category newCategory)
         {
@@ -40,7 +37,6 @@ namespace net_il_mio_fotoalbum.Data
                 throw new ArgumentNullException(nameof(newCategory));
             }
 
-            // Se il titolo non è null nè vuoto...
             if (string.IsNullOrWhiteSpace(newCategory.Title))
             {
                 throw new ArgumentException("Il titolo della categoria non può essere null o vuoto", nameof(newCategory.Title));
@@ -56,19 +52,69 @@ namespace net_il_mio_fotoalbum.Data
             }
             catch (DbUpdateException dbEx)
             {
-                // Log specifico per errori di database...è comodo 
                 Console.WriteLine($"Errore di aggiornamento del database: {dbEx.Message}");
                 return false;
             }
             catch (Exception ex)
             {
-                // Log generico
                 Console.WriteLine($"Si è verificato un errore: {ex.Message}");
                 return false;
             }
         }
 
+        public static bool CategoryDelete(int id)
+        {
+            try
+            {
+                var cat = GetCategoryById(id);
+                if (cat == null)
+                    return false;
 
+                using PhotoContext db = new PhotoContext();
+                db.Remove(cat);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CategoryUpdate(Category updatedCategory)
+        {
+            if (updatedCategory == null)
+            {
+                throw new ArgumentNullException(nameof(updatedCategory));
+            }
+
+            using PhotoContext photoContext = new PhotoContext();
+
+            try
+            {
+                var existingCategory = photoContext.Categories.Find(updatedCategory.Id);
+                if (existingCategory == null)
+                {
+                    return false;
+                }
+
+                existingCategory.Title = updatedCategory.Title;
+
+                await photoContext.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                Console.WriteLine($"Errore di aggiornamento del database: {dbEx.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Si è verificato un errore: {ex.Message}");
+                return false;
+            }
+        }
 
     }
+
 }
