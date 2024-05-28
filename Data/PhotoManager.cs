@@ -84,11 +84,6 @@ namespace net_il_mio_fotoalbum.Data
             }
         }
 
-        public static List<Category> GetAllCategories()
-        {
-            using PhotoContext db = new PhotoContext();
-            return db.Categories.ToList();
-        }
 
         public static void SeedDatabase()
         {
