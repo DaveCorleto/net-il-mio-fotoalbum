@@ -15,6 +15,9 @@ namespace net_il_mio_fotoalbum
 
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<Email> Emails { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
         public const string _connectionString = "Data Source=localhost;Initial Catalog=db-photos;Integrated Security = True;Pooling=False;Encrypt=True;TrustServerCertificate=True";
         public PhotoContext()
         {

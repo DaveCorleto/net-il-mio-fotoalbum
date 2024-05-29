@@ -7,72 +7,27 @@
 
 }
 
-@* Deve essere presente anche una homepage pubblica, nella quale le foto (visibili) sono mostrate agli utenti.
- Devono essere filtrabili per titolo.
-Prevedere sempre nell’homepage pubblica un semplice form di contatto avente i campi email e messaggio. *@
-@* Il click sul tasto invia farà partire una richiesta a una nuova api che salverà sul database il messaggio inviato. *@
-
-<div>Ciao sono la cavolo di index</div>
 
 <div class="photo-cont">
-    @foreach (var photo in Model)
+    @foreach (var foto in Model)
     {
         <div class="photo">
-            <div class="name">@photo.Title </div>
-            @* <div class="description">@pizza.Description</div> *@
-@*             <div class="url">
-                <img src="@photo.Image" alt="@photo.Title" class="img-fluid" style="max-width: 300px;" />
-            </div> *@
+            <div class="name">@foto.Title </div>
             <div class="photos">
-                @foreach (var foto in Model)
+                @if (foto.Image != null && foto.Image.Length > 0)
                 {
-                    <div class="foto">
-                        <h2>@foto.Title</h2>
-                        @if (foto.Image != null && foto.Image.Length > 0)
-                        {
-                            var base64 = Convert.ToBase64String(photo.Image);
-                            var imgSrc = $"data:image/jpeg;base64,{base64}";
-                            <img src="@imgSrc" alt="@foto.Title" class="img-fluid" style="max-width: 300px;" />
-                        }
-                        else
-                        {
-                            <p>No image available</p>
-                        }
-                    </div>
+                    var base64 = Convert.ToBase64String(foto.Image);
+                    var imgSrc = $"data:image/jpeg;base64,{base64}";
+                    <img src="@imgSrc" alt="@foto.Title" class="img-fluid" style="max-width: 300px;" />
+                }
+                else
+                {
+                    <p>No image available</p>
                 }
             </div>
-
-@*             <div class="buttons">
-                @if (User.IsInRole("USER"))
-                {
-                    <div class="det">
-                        <button><a href='@Url.Action("Show", "Pizza", new { id = pizza.Id })'>Dettaglio</a></button>
-                    </div>
-                } *@
-
-@*                 @if (User.IsInRole("ADMIN"))
-                {
-                    <div class="mod">
-                        <button>
-                            <a href='@Url.Action("Update", "Pizza", new { id = pizza.Id })'>
-                                Modifica
-                            </a>
-                        </button>
-                    </div>
-                } *@
-
-                @if (User.IsInRole("ADMIN"))
-                {
-                    <div class="del">
-                        <form asp-controller="Photo" asp-action="Delete" asp-route-id="@photo.Id" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="submit" value="Elimina" id="del" />
-                        </form>
-                    </div>
-                }
-            @* </div> *@
         </div>
     }
 </div>
+
 
 

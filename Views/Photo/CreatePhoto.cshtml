@@ -1,0 +1,99 @@
+﻿@using net_il_mio_fotoalbum.Models
+@model PhotoFormModel
+@{
+    // ViewData["Title"] = "AdminPage";
+    Layout = "_LayoutDave";
+}
+
+<div class="container">
+    <h2>Create New Photo</h2>
+
+    <form asp-controller="Photo" asp-action="CreatePhoto" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" class="form-control" asp-for="Photo.Title" />
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" class="form-control" asp-for="Photo.Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="categories">Categories:</label>
+            <select id="categories" name="SelectedCategoryIds" class="form-control" asp-for="SelectedCategoryIds" multiple>
+                @foreach (var category in Model.categories)
+                {
+                    <option value="@category.Id">@category.Title</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="image">Image:</label>
+            <input type="file" id="image" class="form-control" name="Image" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    textarea {
+        height: 150px;
+        resize: vertical;
+    }
+
+    .btn-primary {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+

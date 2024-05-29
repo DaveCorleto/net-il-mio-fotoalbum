@@ -1,0 +1,92 @@
+﻿@model net_il_mio_fotoalbum.Models.PhotoFormModel
+
+<div class="container">
+    <h2>Update Photo</h2>
+
+    <form asp-action="UpdatePhoto" asp-controller="Photo" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input asp-for="Photo.Title" id="title" class="form-control" />
+            <span asp-validation-for="Photo.Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea asp-for="Photo.Description" id="description" class="form-control"></textarea>
+            <span asp-validation-for="Photo.Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="categories">Categories:</label>
+            <select asp-for="SelectedCategoryIds" class="form-control" id="categories" multiple>
+                @foreach (var category in Model.categories)
+                {
+                    <option value="@category.Id" selected="@Model.SelectedCategoryIds.Contains(category.Id.ToString())">
+                        @category.Title
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Image:</label>
+            <input type="file" id="image" name="Image" class="form-control" />
+            @if (Model.Photo.Image != null && Model.Photo.Image.Length > 0)
+            {
+                var base64 = Convert.ToBase64String(Model.Photo.Image);
+                var imgSrc = $"data:image/jpeg;base64,{base64}";
+                <img src="@imgSrc" alt="@Model.Photo.Title" class="img-fluid" />
+            }
+            <span asp-validation-for="Photo.Image" class="text-danger"></span>
+        </div>
+
+        <div class="form-group form-check">
+            <input asp-for="Photo.IsVisible" class="form-check-input" />
+            <label class="form-check-label" asp-for="Photo.IsVisible">Visible</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<style>
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0 10px 0;
+    }
+
+    .form-check-input {
+        margin-right: 10px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 10px 20px;
+        color: white;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .text-danger {
+        color: #dc

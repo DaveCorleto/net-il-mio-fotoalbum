@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using net_il_mio_fotoalbum.Data;
 using net_il_mio_fotoalbum.Models;
@@ -25,6 +26,14 @@ namespace net_il_mio_fotoalbum.Controllers
             return View(PhotoManager.GetAllPhotos());
         }
 
+        public IActionResult AdminPage()
+        {
+            PhotoContext photoContext = new PhotoContext();
+            var photos = photoContext.Photos.Include(p => p.Categories).ToList();
+            return View(photos);
+        }
+
+
 
         [HttpGet]
         public IActionResult GetPhotos(int id)
@@ -45,6 +54,7 @@ namespace net_il_mio_fotoalbum.Controllers
             }
         }
 
+
         [HttpGet]
         public IActionResult ShowPhoto(int id)
         {
@@ -53,13 +63,10 @@ namespace net_il_mio_fotoalbum.Controllers
                 var photo = PhotoManager.GetPhotoById(id);
                 if (photo == null)
                 {
-                    return NotFound(); 
+                    return NotFound();
                 }
 
-                var categories = CategoryManager.GetAllCategories();
-                var model = new PhotoFormModel(photo, categories);
-
-                return View(model);
+                return View(photo);
             }
             catch (Exception ex)
             {
@@ -67,6 +74,7 @@ namespace net_il_mio_fotoalbum.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
 
         [HttpGet]
         public IActionResult CreatePhoto()
@@ -96,28 +104,32 @@ namespace net_il_mio_fotoalbum.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreatePhoto(PhotoFormModel photoDaInserire)
         {
-            //Se i dati NON sono validi:
-
             if (ModelState.IsValid == false)
             {
-                // Ritorno la form di prima con i dati della foto
-                // precompilati dall'utente
-
-                return View("Create", photoDaInserire);
+                return View("CreatePhoto", photoDaInserire);
             }
-            //Altrimenti se SONO validi inserisco a db la nuova pizza
 
-            PhotoManager.PhotoInsert(photoDaInserire.Photo, photoDaInserire.Categories);
+            try
+            {
+                PhotoContext photoContext = new PhotoContext();
 
-            // Richiamo la action Index affinché vengano mostrate tutte le pizze
-            // inclusa quella nuova
-            return RedirectToAction("Index");
+                PhotoManager.PhotoInsert(photoDaInserire.Photo, photoDaInserire.SelectedCategoryIds);
 
+                return RedirectToAction("AdminPage", "Photo");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore durante l'inserimento della foto: {ex.Message}");
+                return View("Error");
+            }
         }
+
+
+
 
         public IActionResult UpdatePhoto(int id) // Restituisce la form per l'update di una foto
         {
-            //Recupero la pizza (id) e la assegno a var pizza 
+
             var photo = PhotoManager.GetPhotoById(id);
 
             if (photo == null)
@@ -140,18 +152,18 @@ namespace net_il_mio_fotoalbum.Controllers
                 var categories = Data.CategoryManager.GetAllCategories().Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = c.Title // o un'altra proprietà che desideri visualizzare
+                    Text = c.Title,
                 }).ToList();
 
                 photoDaModificare.Categories = categories;
                 photoDaModificare.CreateCategory();
-                return View("UpdatePizza", photoDaModificare);
+                return View("UpdatePhoto", photoDaModificare);
             }
 
-            var photoMod = PhotoManager.PhotoEdit(id, photoDaModificare.Photo, photoDaModificare.SelectedCategoryIds);
+            var photoMod = PhotoManager.PhotoEdit(id, photoDaModificare.Photo, selectedCategoryIds: photoDaModificare.SelectedCategoryIds);
             if (photoMod)
             {
-                // Richiamiamo la action Index affinché vengano mostrate tutte le foto
+               
                 return RedirectToAction("Index");
             }
             else
@@ -160,6 +172,36 @@ namespace net_il_mio_fotoalbum.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePhoto(int id)
+        {
+            try
+            {
+                var photoToDelete = PhotoManager.GetPhotoById(id);
+
+                if (photoToDelete == null)
+                {
+                    return NotFound();
+                }
+
+                bool deleteSuccess = PhotoManager.PhotoDelete(id);
+
+                if (deleteSuccess)
+                {
+                    return RedirectToAction("AdminPage");
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore durante l'eliminazione della foto: {ex.Message}");
+                return View("Error");
+            }
+        }
 
 
     }

@@ -55,7 +55,7 @@ namespace net_il_mio_fotoalbum.Controllers
             if (ModelState.IsValid)
             {
                 var categoryManager = new Data.CategoryManager();
-                categoryManager.CategoryInsert(category);
+                _ = categoryManager.CategoryInsert(category);
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
