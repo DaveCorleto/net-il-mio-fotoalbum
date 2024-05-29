@@ -2,8 +2,97 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <input type="text" id="searchInput" name="search" value="" placeholder="Cerca foto" />
 </div>
 
+<h1>Invia un Messaggio</h1>
+<form onsubmit="inviaMessaggio(event)" method="post">
+    <div class="mb-3">
+        <strong>Email:</strong>
+        <input id="email" type="email" class="d-block w-150" required />
+    </div>
+    <div class="mb-3">
+        <strong>Messaggio:</strong>
+        <textarea id="testo" class="d-block w-150" required></textarea>
+    </div>
+    <div class="mb-3">
+        <input type="submit" class="btn btn-success" value="Invia" />
+    </div>
+</form>
+
+<div id="photoContainer">
+   
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    function inviaMessaggio(evt) {
+        evt.preventDefault();
+        var email = document.getElementById('email').value;
+        var testo = document.getElementById('testo').value;
+
+        axios.post('https://localhost:7192/api/PhotoWebApi/SendMessage', {
+            email: email,
+            testo: testo
+        })
+            .then(function (response) {
+                console.log('Messaggio inviato con successo:', response.data);
+            })
+            .catch(function (error) {
+                console.error('Errore durante l\'invio del messaggio:', error);
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const photoContainer = document.getElementById('photoContainer');
+
+        function fetchPhotos() {
+            fetch('/api/PhotoWebApi/GetPhotos')
+                .then(response => response.json())
+                .then(data => displayPhotos(data))
+                .catch(error => console.error('Errore:', error));
+        }
+
+        function displayPhotos(photos) {
+            photoContainer.innerHTML = '';
+            photos.forEach(photo => {
+                const photoDiv = document.createElement('div');
+                photoDiv.classList.add('MyPhoto');
+                const categoryList = photo.categories.map(category => `<li>${category.title}</li>`).join('');
+
+                photoDiv.innerHTML = `
+                        <h4 class="filter-text">${photo.title}</h4>
+                        <p>${photo.description}</p>
+                        ${photo.imgSrc ? `<img src="${photo.image}" alt="${photo.title}" />` : ''}
+                        <div>
+                            <ul>${categoryList}</ul>
+                        </div>
+                    `;
+                photoContainer.appendChild(photoDiv);
+            });
+        }
+
+        fetchPhotos();
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keyup', function () {
+            var filter = this.value.toLowerCase();
+            var photos = document.querySelectorAll('.MyPhoto');
+
+            photos.forEach(function (photo) {
+                var title = photo.querySelector('.filter-text').innerText.toLowerCase();
+                if (title.includes(filter)) {
+                    photo.classList.remove('d-none');
+                } else {
+                    photo.classList.add('d-none');
+                }
+            });
+        });
+    });
+</script>

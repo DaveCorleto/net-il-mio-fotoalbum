@@ -6,7 +6,7 @@ namespace net_il_mio_fotoalbum.Models
     public class PhotoFormModel
     {
         public Photo Photo { get; set; } // Oggetto Photo che l'utente sta creando o modificando
-        public List<Category> categories { get; set; }
+        public List<Category>? categories { get; set; }
         public List<SelectListItem>? Categories { get; set; } // Lista delle categorie disponibili e selezionabili per un dropdown o selezione
         public List<string>? SelectedCategoryIds { get; set; } // Lista degli ID delle categorie selezionate dall'utente
 

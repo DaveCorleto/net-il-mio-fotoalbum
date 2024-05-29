@@ -1,11 +1,10 @@
 ﻿@using net_il_mio_fotoalbum.Models
 @model List<Photo>
 @{
-    // ViewData["Title"] = "AdminPage";
+
     Layout = "_LayoutDave";
 }
-
-@* <h2>@ViewData["Title"]</h2> *@
+<h1>Admin Page</h1>
 
 
 
@@ -21,10 +20,6 @@
                         <span>@category.Title</span>
                         <br />
                     }
-                </td>
-                <td>
-                    @* <a asp-page="./Update" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> *@
-                    @* <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a> *@
                 </td>
             </tr>
         }
@@ -124,8 +119,8 @@
 
     .photo-image img {
         width: 100%;
-        height: 200px; /* Impostiamo un'altezza fissa per tutte le immagini */
-        object-fit: cover; /* Per mantenere le proporzioni dell'immagine */
+        height: 200px;
+        object-fit: cover; 
     }
 
     .no-image {

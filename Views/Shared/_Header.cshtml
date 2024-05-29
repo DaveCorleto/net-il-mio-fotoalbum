@@ -1,21 +1,19 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
+﻿
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Il Tuo Logo</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
+
+                    @if (User.IsInRole("Admin"))
+                    { 
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="@Url.Action("AdminPage", "Photo")">Admin</a>
                     </li>
+                    }
                     <li class="nav-item">
                         <partial name="_LoginPartial" />
                     </li>

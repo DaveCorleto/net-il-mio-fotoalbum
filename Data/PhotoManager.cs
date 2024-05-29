@@ -21,6 +21,10 @@ namespace net_il_mio_fotoalbum.Data
             _context = context;
         }
 
+        public PhotoManager()
+        {
+        }
+
         //Uso dell'enum per gestire meglio nei metodi i vari tipi di risultato
         public enum ResultType
         {
@@ -76,18 +80,18 @@ namespace net_il_mio_fotoalbum.Data
 
             try
             {
-                _context.Photos.Add(photoModel.Photo);
-
-                // Aggiungi le categorie alla foto
+                _context.Photos.Add(photo);
+      
                 foreach (var categoryId in photoModel.SelectedCategoryIds)
                 {
                     var category = await _context.Categories.FindAsync(int.Parse(categoryId));
                     if (category != null)
                     {
-                        photoModel.Photo.Categories.Add(category);
+                        photo.Categories.Add(category);
                     }
                 }
 
+  
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -97,6 +101,8 @@ namespace net_il_mio_fotoalbum.Data
                 return false;
             }
         }
+
+
 
         public static bool PhotoEdit(int id, Photo photo, List<string> selectedCategoryIds) 
         {
@@ -205,6 +211,11 @@ namespace net_il_mio_fotoalbum.Data
         }
 
         internal static void PhotoInsert(Photo photo, List<string>? selectedCategoryIds)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static object? GetPhotoById()
         {
             throw new NotImplementedException();
         }

@@ -99,23 +99,39 @@ namespace net_il_mio_fotoalbum.Controllers
             return View(model);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreatePhoto(PhotoFormModel photoDaInserire)
+        public async Task<IActionResult> CreatePhoto(PhotoFormModel photoDaInserire)
         {
             if (ModelState.IsValid == false)
             {
+                photoDaInserire.categories = CategoryManager.GetAllCategories();
                 return View("CreatePhoto", photoDaInserire);
             }
 
             try
             {
-                PhotoContext photoContext = new PhotoContext();
+                // Creare un oggetto Photo dal modello ricevuto
+                var photo = new Photo
+                {
+                    Title = photoDaInserire.Photo.Title,
+                    Description = photoDaInserire.Photo.Description,
+                    Image = photoDaInserire.Photo.Image,
+                    IsVisible = photoDaInserire.Photo.IsVisible,
+                    Categories = photoDaInserire.Photo.Categories
+                };
 
-                PhotoManager.PhotoInsert(photoDaInserire.Photo, photoDaInserire.SelectedCategoryIds);
 
-                return RedirectToAction("AdminPage", "Photo");
+                var photoManager = new PhotoManager();
+
+                if (!await photoManager.PhotoInsert(photo, photoDaInserire))
+                {
+                    return View("Error");
+                }
+                else
+                {
+                    return RedirectToAction("AdminPage", "Photo");
+                }
             }
             catch (Exception ex)
             {
@@ -123,6 +139,46 @@ namespace net_il_mio_fotoalbum.Controllers
                 return View("Error");
             }
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> CreatePhoto(PhotoFormModel photoDaInserire, IFormFile image)
+        //{
+        //    if (ModelState.IsValid == false)
+        //    {
+        //        photoDaInserire.categories = CategoryManager.GetAllCategories();
+        //        return View("CreatePhoto", photoDaInserire);
+        //    }
+
+        //    try
+        //    {
+        //        // Creare un oggetto Photo dal modello ricevuto
+        //        var photo = new Photo
+        //        {
+        //            Title = photoDaInserire.Photo.Title,
+        //            Description = photoDaInserire.Photo.Description,
+        //            IsVisible = photoDaInserire.Photo.IsVisible
+        //        };
+
+        //        // Leggi il file caricato dall'utente e convertilo in un array di byte
+        //        if (image != null)
+        //        {
+        //            using (var memoryStream = new MemoryStream())
+        //            {
+        //                await image.CopyToAsync(memoryStream);
+        //                photo.Image = memoryStream.ToArray();
+        //            }
+        //        }
+
+        //        // Continua con il salvataggio nel database
+        //        // ...
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Errore durante l'inserimento della foto: {ex.Message}");
+        //        return View("Error");
+        //    }
+        //}
 
 
 

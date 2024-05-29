@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using net_il_mio_fotoalbum.Data;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using net_il_mio_fotoalbum.Areas.Identity.Data;
+
 
 namespace net_il_mio_fotoalbum
 {
