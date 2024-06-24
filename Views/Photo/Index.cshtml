@@ -11,23 +11,83 @@
 <div class="photo-cont">
     @foreach (var foto in Model)
     {
-        <div class="photo">
-            <div class="name">@foto.Title </div>
-            <div class="photos">
-                @if (foto.Image != null && foto.Image.Length > 0)
-                {
-                    var base64 = Convert.ToBase64String(foto.Image);
-                    var imgSrc = $"data:image/jpeg;base64,{base64}";
-                    <img src="@imgSrc" alt="@foto.Title" class="img-fluid" style="max-width: 300px;" />
-                }
-                else
-                {
-                    <p>No image available</p>
-                }
-            </div>
-        </div>
+
+            <div class="photo">
+               
+                <div class="photos">
+                        @* il titolo deve apparire all'interno della foto in alto' *@
+                        <div class="name">@foto.Title </div>
+
+                        <div class="card-image">
+                            @if (foto.Image != null && foto.Image.Length > 0)
+                            {
+                                var base64 = Convert.ToBase64String(foto.Image);
+                                var imgSrc = $"data:image/jpeg;base64,{base64}";
+                                <img src="@imgSrc" alt="@foto.Title" />
+                            }
+                            else
+                            {
+                                <p>No image available</p>
+                            }
+                        </div>
+                </div>
+            
+            </div>   
+
     }
 </div>
 
+<style>
+    .photo-cont {
+        display:flex;
+        justify-content:space-between;
+        align-items:center; 
+        width:80%;
+        margin:auto;
+    }
+    .photo {
+        width: calc((100% / 2) - 10px);
+    }
+    .photo img:hover {
+        transform: scale(1.01);
+    }
+    .photo img {
+        border-radius:10px;  
+    }
+    .photos {
+        margin:auto;
+    }
+    .photos img {
+        width: 100%;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 400px; /* fixed height */
+        overflow: hidden; /* hide overflow content */
+        border-radius: 10px;
+    }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* ensure the image covers the container */
+            border-radius: 10px; /* apply border-radius to image */
+            transition: transform 0.3s ease; /* smooth scaling effect */
+        }
+
+        .name {
+            display:none;
+        }
+
+        .name:hover {
+            display: absolute;
+            top:15px;
+            left:15px;
+            color:white;
+            font-style:bold;
+        }
+    
+</style>
 
 
