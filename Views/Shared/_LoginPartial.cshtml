@@ -3,7 +3,7 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-<ul class="navbar-nav">
+<ul class="navbar-main">
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
@@ -25,3 +25,23 @@ else
     </li>
 }
 </ul>
+
+<style>
+    .navbar-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width:75%;
+        margin:auto;
+    }
+
+    ul {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    li {
+        list-style: none;
+    }
+</style>
